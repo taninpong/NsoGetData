@@ -97,7 +97,7 @@ namespace NSOWater.HotMigration.Models
         /// <summary>
         ///  จำนวนชั้น (สำหรับอาคารสูง 4 หรือ 5)
         /// </summary>
-        public int? FloorCount { get; set; }
+        public double? FloorCount { get; set; }
 
         /// <summary>
         /// บันทึกปัญหา/อุปสรรค หรือข้อความทั่วไปเพื่อเตือนความจำ
