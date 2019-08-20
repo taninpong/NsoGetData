@@ -19,10 +19,11 @@ namespace NsoGetData.Models
     public class Poppulation
     {
         public NameTitle? NameTitle { get; set; }
+        public string OtherTitle { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public Relationship? Relationship { get; set; }
         public Sex? Sex { get; set; }
-        public string OtherTitle { get; set; }
         public BirthDate? BirthDate { get; set; }
         public BirthMonth? BirthMonth { get; set; }
         public BirthYear? BirthYear { get; set; }

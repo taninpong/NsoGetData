@@ -141,6 +141,7 @@ namespace NsoGetData
                             persondata.FirstName = item.FirstName;
                             persondata.LastName = item.LastName;
                             persondata.NameTitle = item.NameTitle;
+                            persondata.Relationship = item.Relationship;
                             persondata.Sex = item.Sex;
                             persondata.OtherTitle = item.OtherTitle;
                             persondata.BirthDate = item.BirthDate;
@@ -217,7 +218,7 @@ namespace NsoGetData
                 {
                     for (int j = 0; j < untdata.Count; j++)
                     {
-                        if (blddata[i]._id == untdata[j].BuildingId )
+                        if (blddata[i]._id == untdata[j].BuildingId)
                         {
                             sumbldunt.Add(new SumBldUnt()
                             {
