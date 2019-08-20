@@ -25,6 +25,7 @@ namespace NsoGetData
             string data = "43801011099001";
             var itemBlob_Building = new List<CloudBlockBlob>();
             var itemBlob_House = new List<CloudBlockBlob>();
+            var blddataAll = new List<BldData2>();
             var blddata = new List<BldData>();
             var untdata = new List<UntData>();
             var untdata2 = new UntData();
@@ -68,23 +69,11 @@ namespace NsoGetData
                 if (log.BlobName.StartsWith("bld"))
                 {
                     itemBlob_Building.Add(blob);
-                    //blddata.Add(new BldData()
-                    //{
-                    //    _id = log._id,
-                    //    EA = log.EA,
-                    //    Alley = log.
-                    //});
                 }
                 else if (log.BlobName.StartsWith("unt"))
                 {
                     itemBlob_House.Add(blob);
                 }
-                //else if (log.BlobName.StartsWith("comm"))
-                //{
-                //    itemBlob_Community.Add(blob);
-                //}
-
-
                 var created = directory.CreateIfNotExistsAsync();
                 var containerName = directory.Name;
                 var sas = directory.GetSharedAccessSignature(new SharedAccessBlobPolicy()
@@ -104,34 +93,41 @@ namespace NsoGetData
                 {
                     count++;
                     var building = ReadModelBlob<BuildingSample>(item).GetAwaiter().GetResult();
-                    blddata.Add(new BldData()
+                    blddataAll.Add(new BldData2()
                     {
                         _id = building._id,
                         EA = building.EA,
-                        Alley = building.Alley,
-                        BuildingType = building.BuildingType.GetHashCode().ToString(),
-                        HouseNo = building.HouseNo,
-                        Name = building.Name,
                         Ordering = building.Ordering,
-                        Road = building.Road
+                        Road = building.Road,
+                        Alley = building.Alley,
+                        Name = building.Name,
+                        HouseNo = building.HouseNo,
+                        Latitude = building.Latitude,
+                        Longitude = building.Longitude,
+                        BuildingType = building.BuildingType,
+                        Other = building.Other,
+                        Accesses = building.Accesses,
+                        VacancyCount = building.VacancyCount,
+                        AbandonedCount = building.AbandonedCount,
+                        UnitCount = building.UnitCount,
+                        UnitAccess = building.UnitAccess,
+                        VacantRoomCount = building.VacantRoomCount,
+                        OccupiedRoomCount = building.OccupiedRoomCount,
+
                     });
                     DateTime Now = DateTime.Now;
                     Console.WriteLine($"[{ Now }] {count}{"/"}{itemBlob_Building.Count} : Success !!");
-                    //writer.Write(building.ToJson());
-                    //writer.WriteLine(",");
                 }
-                //writer.Write("]");
-
+                writer.Write(blddataAll.ToJson());
             }
 
             Console.WriteLine("houseHold..");
             using (StreamWriter writer = new StreamWriter(pathhouseHold, true))
             {
-                //writer.Write("[");
-
                 foreach (var blobHH in itemBlob_House)
                 {
-                    count++;
+                    var count2 = 1;
+                    count2++;
                     var houseHold = ReadModelBlob<HouseHoldSample>(blobHH).GetAwaiter().GetResult();
                     if (houseHold.Population.Persons != null)
                     {
@@ -158,55 +154,14 @@ namespace NsoGetData
                                 PoppulationData = persondata
                             });
                             DateTime Now = DateTime.Now;
-                            Console.WriteLine($"[{ Now }] {count}{"/"}{itemBlob_House.Count} : Success !!");
+                            Console.WriteLine($"[{ Now }] {count2}{"/"}{itemBlob_House.Count} : Success !!");
                         }
-
-                        //for (int i = 0; i < houseHold.Population.Persons.Count; i++)
-                        //{
-                        //    persondata.FirstName = houseHold.Population.Persons[i].FirstName;
-                        //    persondata.LastName = houseHold.Population.Persons[i].LastName;
-                        //    persondata.NameTitle = houseHold.Population.Persons[i].NameTitle;
-                        //    persondata.Sex = houseHold.Population.Persons[i].Sex;
-                        //    untdata.Add(new UntData
-                        //    {
-                        //        BuildingId = houseHold.BuildingId,
-                        //        Ea = houseHold.EA,
-                        //        PoppulationData = persondata
-                        //    });
-                        //    //untdata2.Ea = houseHold.EA;
-                        //    //untdata2.BuildingId = houseHold.BuildingId;
-                        //    //untdata2.PoppulationData = new Poppulation({
-                        //    //    FirstName = houseHold.Population.Persons[i].FirstName,
-                        //    //});
-                        //    writer.WriteLine(",");
-                        //    writer.Write(untdata.ToJson());
-                        //}
-                        //            persondata.Add(new Poppulation()
-                        //            {
-                        //                FirstName = item.FirstName,
-                        //                LastName = item.LastName,
-                        //                NameTitle = item.NameTitle,
-                        //                Sex = item.Sex
-                        //            });
-                        //            untdata.Add(new UntData()
-                        //            {
-                        //                Ea = houseHold.EA,
-                        //                BuildingId = houseHold.BuildingId,
-                        //                PoppulationData = persondata
-                        //            });
                     }
                     else
                     {
                         continue;
                     }
-                    //writer.WriteLine(",");
-                    //}
-                    //DateTime Now = DateTime.Now;
-                    //Console.WriteLine($"[{ Now }] {count} : Success !!");
                 }
-                //writer.Write(untdata.ToJson());
-
-                //writer.Write("]");
             }
             Console.WriteLine(untdata.Count);
 
@@ -214,23 +169,29 @@ namespace NsoGetData
             using (StreamWriter writer = new StreamWriter(pathCommunity, true))
             {
                 var count2 = 1;
-                for (int i = 0; i < blddata.Count; i++)
+                for (int i = 0; i < blddataAll.Count; i++)
                 {
                     for (int j = 0; j < untdata.Count; j++)
                     {
-                        if (blddata[i]._id == untdata[j].BuildingId)
+                        if (blddataAll[i]._id == untdata[j].BuildingId)
                         {
                             sumbldunt.Add(new SumBldUnt()
                             {
-                                BldData = blddata[i],
+                                BldData = new BldData
+                                {
+                                    EA = blddataAll[i].EA,
+                                    Road = blddataAll[i].Road,
+                                    Alley = blddataAll[i].Alley,
+                                    BuildingType = blddataAll[i].BuildingType,
+                                    HouseNo = blddataAll[i].HouseNo,
+                                    Name = blddataAll[i].Name,
+                                    Ordering = blddataAll[i].Ordering,
+                                    _id = blddataAll[i]._id
+                                },
                                 UntData = untdata[j]
                             });
-
-                            //}
-                            //Console.WriteLine(sumbldunt.ToJson());
                             DateTime Now = DateTime.Now;
-                            Console.WriteLine($"[{ Now }] {count2}{"/"}{blddata.Count} : Success !!");
-                            //writer.WriteLine(",");
+                            Console.WriteLine($"[{ Now }] {count2}{"/"}{blddataAll.Count} : Success !!");
                             count2++;
                         }
                     }
