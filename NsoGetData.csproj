@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\FromNsoVars\HasWarningWaterUsage1V.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MongoDB.Bson" Version="2.9.0-beta2" />
     <PackageReference Include="MongoDB.Driver" Version="2.9.0-beta2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
