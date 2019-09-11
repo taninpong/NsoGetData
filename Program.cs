@@ -85,7 +85,7 @@ namespace NsoGetData
             }
             ////เขียน list ลง text
             Console.WriteLine("building..");
-            using (StreamWriter writer = new StreamWriter(pathbuilding, true))
+            using (StreamWriter writer = new StreamWriter(pathbuilding, false))
             {
                 //writer.Write("[");
 
@@ -116,18 +116,18 @@ namespace NsoGetData
 
                     });
                     DateTime Now = DateTime.Now;
-                    Console.WriteLine($"[{ Now }] {count}{"/"}{itemBlob_Building.Count} : Success !!");
+                    Console.WriteLine($"[{ Now }] {count}{"/"}{uploadLogs.Count} : Success !!");
                 }
                 writer.Write(blddataAll.ToJson());
             }
 
             Console.WriteLine("houseHold..");
-            using (StreamWriter writer = new StreamWriter(pathhouseHold, true))
+            using (StreamWriter writer = new StreamWriter(pathhouseHold, false))
             {
                 foreach (var blobHH in itemBlob_House)
                 {
-                    var count2 = 1;
-                    count2++;
+                    //var count2 = 1;
+                    count++;
                     var houseHold = ReadModelBlob<HouseHoldSample>(blobHH).GetAwaiter().GetResult();
                     if (houseHold.Population.Persons != null)
                     {
@@ -154,7 +154,7 @@ namespace NsoGetData
                                 PoppulationData = persondata
                             });
                             DateTime Now = DateTime.Now;
-                            Console.WriteLine($"[{ Now }] {count2}{"/"}{itemBlob_House.Count} : Success !!");
+                            Console.WriteLine($"[{ Now }] {count}{"/"}{uploadLogs.Count} : Success !!");
                         }
                     }
                     else
@@ -165,8 +165,8 @@ namespace NsoGetData
             }
             Console.WriteLine(untdata.Count);
 
-            Console.WriteLine("SunBldUnt..");
-            using (StreamWriter writer = new StreamWriter(pathCommunity, true))
+            Console.WriteLine("SumBldUnt..");
+            using (StreamWriter writer = new StreamWriter(pathCommunity, false))
             {
                 var count2 = 1;
                 for (int i = 0; i < blddataAll.Count; i++)
@@ -198,6 +198,9 @@ namespace NsoGetData
                 }
                 writer.Write(sumbldunt.ToJson());
             }
+
+
+
         }
 
         private static async Task<T> ReadModelBlob<T>(CloudBlockBlob blob)
